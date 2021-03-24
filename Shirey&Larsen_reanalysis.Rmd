@@ -1,0 +1,119 @@
+---
+title: "Larsen&Shirey_ELE2021_IndependentAnalysis"
+author: "Michael W Belitz"
+date: "3/24/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Reanalysis of Larsen and Shirey 2021 Ecology Letters
+Original technical comment of interest: https://doi.org/10.1111/ele.13731
+
+In a response to the Larsen and Shirey (2021) technical comment, Fric et al. (2021) make the claim that "... we replicated their [LS] procedures (Supplement S5), finding that LS confused their Onset and Termination results."
+
+Below is a independent reanalysis of Larsen and Shirey's (2021) analysis to see if LS did indeed confuse their Onset and Termination results. We use the same estimated phenology metrics of as Larsen and Shirey (2021), but generate our own independent linear model results for onset and termination coefficients. 
+
+The steps and code for this reanalysis are demonstrated below.
+
+## Read in data
+```{r data, echo=TRUE}
+# Get data from Larsen & Shirey's GitHub
+githubURL <- "https://github.com/RiesLabGU/Larsen-Shirey2020_EcoLettersComment/blob/master/data/phenometrics.RData?raw=TRUE"
+load(url(githubURL))
+```
+
+## Examine data
+Note that the phenology data has later values for termination than for onset. This makes biological sense and confirms that at the stage of estimating phenology metrics, there was no error. 
+```{r examinedata, echo=TRUE}
+head(pheno.data)
+```
+
+## Write functions to generate species-specific Linear models
+For each of the 22 species included in the Larsen and Shirey re-analysis, fit a linear model with latitude and year as the predictor variables. Onset and Termination are the response variables. Model coeficcients and p-values of the latitude term are extracted. 
+
+```{r functions, echo=TRUE}
+# Onset
+onset_coef_fun <- function(spp_name){
+  
+  mdf <- filter(pheno.data, name == spp_name) # filter to spp.
+  spp_lm <- lm(onset~rndLat+year, data = mdf) # fit linear model
+  
+  out_df <- data.frame(
+    name = spp_name,
+    onset_coef = spp_lm$coefficients[['rndLat']], # extract latitude coef
+    p_value = summary(spp_lm)$coefficients[,4][['rndLat']] # extract latitude p-value
+    )
+  
+  return(out_df)
+}
+
+# Termination
+offset_coef_fun <- function(spp_name){
+  
+  mdf <- filter(pheno.data, name == spp_name)
+  spp_lm <- lm(term~rndLat+year, data = mdf)
+  
+  out_df <- data.frame(
+    name = spp_name,
+    offset_coef = spp_lm$coefficients[['rndLat']],
+    p_value = summary(spp_lm)$coefficients[,4][['rndLat']]
+  )
+  
+  return(out_df)
+}
+
+```
+
+## Run function on the 22 species included in reanalysis.
+```{r runFunctions, echo=TRUE}
+
+# get a list of the 22 spp
+spp_list <- unique(pheno.data$name)
+
+### get model coef for each spp
+
+#Onset First
+onset_coef_list <- lapply(spp_list, onset_coef_fun)
+onset_coef_df <- bind_rows(onset_coef_list) %>% 
+  mutate(slope = case_when(onset_coef > 0 & p_value < 0.05 ~ "positive",
+                           onset_coef < 0 & p_value < 0.05 ~ "negative",
+                           p_value >= 0.05 ~ "not-sig"))
+
+onset_coef_sum <- onset_coef_df %>% 
+  group_by(slope) %>% 
+  summarise(slope_count = n()) %>% 
+  mutate(phenometric = "Onset")
+
+
+#Offset
+offset_coef_list <- lapply(spp_list, offset_coef_fun)
+offset_coef_df <- bind_rows(offset_coef_list) %>% 
+  mutate(slope = case_when(offset_coef > 0 & p_value < 0.05 ~ "positive",
+                           offset_coef < 0 & p_value < 0.05 ~ "negative",
+                           p_value >= 0.05 ~ "not-sig"))
+
+offset_coef_sum <- offset_coef_df %>% 
+  group_by(slope) %>% 
+  summarise(slope_count = n()) %>% 
+  mutate(phenometric = "Termination")
+
+# bind two datasets together
+total_coef <- rbind(onset_coef_sum, offset_coef_sum)
+total_coef$phenometric <- factor(total_coef$phenometric, levels = c("Onset", "Termination"))
+print(total_coef)
+```
+
+## Plot results
+Note results of our analysis that was generated independently show the same pattern as demonstrated in Larsen and Shirey (2021), Figure 2c & Figure 2f
+
+```{r plotResults, echo = TRUE}
+  ggplot() +
+  geom_bar(total_coef,mapping = aes(x = phenometric, y = slope_count,
+                                     fill = slope), stat = "identity") +
+  scale_fill_manual(values = c("blue", "grey", "dark green"))
+```
+
