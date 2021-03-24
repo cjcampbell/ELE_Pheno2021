@@ -45,7 +45,12 @@ summtab_fr %>%
   scale_fill_manual(breaks = c(-1, 0, 1), values = c("blue", "grey50", "forestgreen")) +
   theme_bw()
 
-
+# Notably, the filtered Fric et al. 2021 model results we generated represent 
+# generally positive responses of both onset (8% positive, remainder 
+# non-significant) and termination (64% positive, remainder non-significant) with 
+# respect to latitude. That's both a digression from original results, LS's 
+# reanalyses (though closer), and from the "reanalyses" presented in the Fric
+# 2021 rebuttle! 
 
 
 # Plot together:
@@ -116,3 +121,4 @@ mdf %>%
 # Looks quite similar to me, so I don't think these explain any discrepancies.
 # 
 
+# 
