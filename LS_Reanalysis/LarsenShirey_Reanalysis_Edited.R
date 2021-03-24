@@ -388,6 +388,9 @@ result5<-temp %>%
   mutate(modelnum=5, modelname="New")
 rm(temp)
 
+### CJC insert:
+saveRDS(result5, file.path("data", "LS_reanalysisData.rds"))
+
 #Combine all results into 1 data frame
 result.compar<-as.data.frame(rbind(fric1,fric2,fric3,fric4,result5))
 #This field is used to create stacked barplots
