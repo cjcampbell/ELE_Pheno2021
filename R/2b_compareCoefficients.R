@@ -2,15 +2,53 @@
 # Goal: compare coefficients of each suite of models
 library(tidyverse)
 
-
 # Load LS model outputs:
 dat_ls <- readRDS(file.path("~/ELE_Pheno2021","data", "LS_reanalysisData.rds"))
 names(dat_ls)[-1] <- paste0(names(dat_ls)[-1], "_ls")
+
+# Plot LS model outputs:
+summtab_ls <- dat_ls %>% 
+  select_at(vars(
+    contains("onset")&contains("response"),contains("term")&contains("response"))) %>% 
+  pivot_longer(cols = 1:2, names_to = c("par")) %>%
+  dplyr::group_by(par, value) %>% dplyr::summarise(n = n()) 
+print(summtab_ls)
+summtab_ls%>% 
+  dplyr::mutate(
+    value = factor(value, levels = c(-1, 0, 1)),
+    par = factor(par, levels = c("response_onset_fr", "onset.response_ls", "response_term_fr", "term.response_ls"))) %>% 
+  ggplot() +
+  aes(fill = factor(value), y = n, x = par) +
+  geom_bar( position="stack", stat = "identity") +
+  scale_fill_manual(breaks = c(-1, 0, 1), values = c("blue", "grey50", "forestgreen")) +
+  theme_bw()
 
 # Load Fric reanalyzed model outputs.
 dat_fr <- readRDS("~/ELE_Pheno2021/data/fricData.rds")
 names(dat_fr)[-1] <- paste0(names(dat_fr)[-1], "_fr")
 
+# Plot LS model outputs:
+summtab_fr <- dat_fr %>% 
+  filter(name %in% dat_ls$name) %>% 
+  select_at(vars(
+    contains("onset")&contains("response"),contains("term")&contains("response"))) %>% 
+  pivot_longer(cols = 1:2, names_to = c("par")) %>%
+  dplyr::group_by(par, value) %>% dplyr::summarise(n = n()) 
+print(summtab_fr)
+summtab_fr %>% 
+  dplyr::mutate(
+    value = factor(value, levels = c(-1, 0, 1)),
+    par = factor(par, levels = c("response_onset_fr", "onset.response_ls", "response_term_fr", "term.response_ls"))) %>% 
+  ggplot() +
+  aes(fill = factor(value), y = n, x = par) +
+  geom_bar( position="stack", stat = "identity") +
+  scale_fill_manual(breaks = c(-1, 0, 1), values = c("blue", "grey50", "forestgreen")) +
+  theme_bw()
+
+
+
+
+# Plot together:
 mdf <- inner_join(dat_ls, dat_fr)
 
 # Several response terms change between phenometrics from each analysis, but certainly not all of them are swapped:
@@ -35,8 +73,9 @@ mdf %>% dplyr::group_by(response_term_fr) %>% dplyr::summarise(n = n())
 
 # Recreate part of the plots from LS, containing their results (data_ls) and 
 # Frick et al.'s metrics when pruned to the same 22-species set.
-mdf %>% select_at(vars(
-  contains("onset")&contains("response"),contains("term")&contains("response"))) %>% 
+mdf %>% 
+  select_at(vars(
+    contains("onset")&contains("response"),contains("term")&contains("response"))) %>% 
   pivot_longer(cols = 1:4, names_to = c("par")) %>%
   dplyr::group_by(par, value) %>% dplyr::summarise(n = n()) %>% 
   dplyr::mutate(
@@ -75,3 +114,5 @@ mdf %>%
   theme_bw()
 
 # Looks quite similar to me, so I don't think these explain any discrepancies.
+# 
+
