@@ -1,4 +1,6 @@
 
+if(dir.exists("data")) dir.create("data")
+
 # Load Fric et al reanalyses ---------------------------------------------
 library(XLConnect)
 library(tidyverse)
