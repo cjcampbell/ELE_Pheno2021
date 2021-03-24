@@ -28,6 +28,8 @@ saveRDS(fricData, file.path("data", "fricData.rds"))
 dat_fr %>% group_by(verbatimName_fr) %>% dplyr::summarise(n = n()) %>% arrange(desc(n))
 ## Four species evaluated separately in Eurasia / NoAm, apparently. 
 
+
+
 # Run LS analyses ---------------------------------------------------------
 
 ## Code here contains slight file path modifications for convenience ##
