@@ -26,7 +26,7 @@ saveRDS(fricData, file.path("data", "fricData.rds"))
 
 # Briefly check out these data:
 dat_fr %>% group_by(verbatimName_fr) %>% dplyr::summarise(n = n()) %>% arrange(desc(n))
-## Four species evaluated separately in Eurasia / NoAm, apparently
+## Four species evaluated separately in Eurasia / NoAm, apparently. 
 
 # Run LS analyses ---------------------------------------------------------
 
