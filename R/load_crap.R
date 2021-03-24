@@ -22,6 +22,11 @@ fricData<- fricData %>%
 
 saveRDS(fricData, file.path("data", "fricData.rds"))
 
+# Briefly check out these data:
+dat_fr %>% group_by(verbatimName_fr) %>% dplyr::summarise(n = n()) %>% arrange(desc(n))
+### WHY ARE THERE FOUR SPECIES BEING EVALUATED TWICE
+### WITH DIFFERENT MODEL OUTPUTS EACH TIME!!!!!!!!
+
 # Run LS analyses ---------------------------------------------------------
 
 ## Code here contains slight file path modifications for convenience ##
