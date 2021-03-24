@@ -67,10 +67,11 @@ offset_coef_df <- bind_rows(offset_coef_list) %>%
 offset_coef_sum <- offset_coef_df %>% 
   group_by(slope) %>% 
   summarise(slope_count = n()) %>% 
-  mutate(phenometric = "Offset")
+  mutate(phenometric = "Termination")
 
 # bind two datasets together
 total_coef <- rbind(onset_coef_sum, offset_coef_sum)
+total_coef$phenometric <- factor(total_coef$phenometric, levels = c("Onset", "Termination"))
 
 ggplot() +
   geom_bar(total_coef, mapping = aes(x = phenometric, y = slope_count,
