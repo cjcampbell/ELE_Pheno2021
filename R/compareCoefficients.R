@@ -2,7 +2,7 @@
 # Goal: compare coefficients of each suite of models...
 
 # Load LS model outputs:
-dat_ls <- read_rds(file.path("~/ELE_Pheno2021","data", "LS_reanalysisData.rds"))
+dat_ls <- readRDS(file.path("~/ELE_Pheno2021","data", "LS_reanalysisData.rds"))
 names(dat_ls)[-1] <- paste0(names(dat_ls)[-1], "_ls")
 
 # Load Fric reanalyzed model outputs.
