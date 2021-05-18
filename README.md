@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/350917391.svg)](https://zenodo.org/badge/latestdoi/350917391)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4771054.svg)](https://doi.org/10.5281/zenodo.4771054)
 
 Larsen et al. (2020) [https://doi.org/10.1111/ele.13731](https://doi.org/10.1111/ele.13731) wrote a technical comment re: Fric et al. (2020) [https://doi.org/10.1111/ele.13419](https://doi.org/10.1111/ele.13419). In Fric et al.’s response (2021) [https://doi.org/10.1111/ele.13739](https://doi.org/10.1111/ele.13739), the authors claim that Larsen et al. 2020 (LS) analyses contained an error. Specifically, they allege that LS swapped onset and termination phenology metrics. We evaluated three lines of evidence to evaluate this claim:
 
